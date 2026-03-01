@@ -1,4 +1,4 @@
-// Mosque shape definition as a 2D grid
+// Mosque shape definition generated programmatically
 // 0 = empty, 1 = tier 1 ($500), 2 = tier 2 ($1000), 3 = tier 3 ($2500), 4 = tier 4 ($5000)
 
 export const TIERS = {
@@ -15,43 +15,72 @@ export interface BlockData {
   row: number;
   col: number;
   tier: TierKey;
-  donated: number; // amount donated so far
+  donated: number;
   donorName: string | null;
   donorLabel: string | null;
 }
 
-// Mosque shape: 24 cols x 20 rows
-// The mosque has a dome, walls, door, and a minaret on the right
-export const MOSQUE_SHAPE: number[][] = [
-  // Row 0-2: Sky / dome top
-  [0,0,0,0,0,0,0,0,0,0,4,0,0,0,0,0,0,0,0,0,0,0,0,0],
-  [0,0,0,0,0,0,0,0,0,4,4,4,0,0,0,0,0,0,0,0,0,0,0,0],
-  [0,0,0,0,0,0,0,0,4,4,4,4,4,0,0,0,0,0,0,0,0,0,0,0],
-  // Row 3-4: Dome widening
-  [0,0,0,0,0,0,0,4,4,4,4,4,4,4,0,0,0,0,0,0,0,3,0,0],
-  [0,0,0,0,0,0,3,3,3,3,3,3,3,3,3,0,0,0,0,0,0,3,0,0],
-  // Row 5-6: Dome base / upper wall
-  [0,0,0,0,0,3,3,3,3,3,3,3,3,3,3,3,0,0,0,0,0,3,0,0],
-  [0,0,0,0,3,3,3,3,3,3,3,3,3,3,3,3,3,0,0,0,3,3,3,0],
-  // Row 7-9: Upper walls
-  [0,0,0,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,0,0,3,3,3,0],
-  [0,0,0,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,0,0,3,3,3,0],
-  [0,0,0,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,0,0,3,3,3,0],
-  // Row 10-12: Middle walls with arches
-  [0,0,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,0,2,2,2,0],
-  [0,0,2,2,2,0,0,2,2,2,0,0,2,2,2,0,0,2,2,0,2,2,2,0],
-  [0,0,2,2,2,0,0,2,2,2,0,0,2,2,2,0,0,2,2,0,2,2,2,0],
-  // Row 13-15: Lower walls
-  [0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0],
-  [0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0],
-  [0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0],
-  // Row 16-18: Base with door
-  [1,1,1,1,1,1,1,1,1,0,0,0,0,1,1,1,1,1,1,1,1,1,1,1],
-  [1,1,1,1,1,1,1,1,1,0,0,0,0,1,1,1,1,1,1,1,1,1,1,1],
-  [1,1,1,1,1,1,1,1,1,0,0,0,0,1,1,1,1,1,1,1,1,1,1,1],
-  // Row 19: Foundation
-  [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1],
-];
+// Generate mosque shape: 48 cols × 46 rows
+// Matches the reference building: steeple on left, A-frame roof, brick walls, entrance
+function createMosqueShape(): number[][] {
+  const COLS = 48;
+  const ROWS = 46;
+  const grid: number[][] = Array.from({ length: ROWS }, () => Array(COLS).fill(0));
+
+  const fill = (row: number, c1: number, c2: number, tier: number) => {
+    for (let c = c1; c <= c2; c++) {
+      if (row >= 0 && row < ROWS && c >= 0 && c < COLS) {
+        grid[row][c] = tier;
+      }
+    }
+  };
+
+  const clear = (row: number, c1: number, c2: number) => {
+    for (let c = c1; c <= c2; c++) {
+      if (row >= 0 && row < ROWS && c >= 0 && c < COLS) {
+        grid[row][c] = 0;
+      }
+    }
+  };
+
+  // === STEEPLE TIP (tier 4 - Platinum) ===
+  fill(0, 5, 5, 4);
+  for (let r = 1; r <= 5; r++) fill(r, 4, 6, 4);
+  for (let r = 6; r <= 7; r++) fill(r, 3, 7, 4);
+
+  // === ROOF PEAK (tier 4) ===
+  fill(8, 26, 26, 4);
+  fill(9, 25, 27, 4);
+
+  // === STEEPLE BODY (tier 3 - Gold) ===
+  for (let r = 8; r <= 23; r++) fill(r, 3, 7, 3);
+
+  // === MAIN A-FRAME ROOF (tier 3) ===
+  for (let r = 10; r <= 23; r++) {
+    const halfWidth = r - 8;
+    fill(r, 26 - halfWidth, 26 + halfWidth, 3);
+  }
+
+  // === BRICK WALLS (tier 2 - Silver) ===
+  for (let r = 24; r <= 35; r++) fill(r, 3, 43, 2);
+
+  // === WINDOWS (clear openings in walls) ===
+  for (let r = 27; r <= 30; r++) {
+    clear(r, 16, 17);
+    clear(r, 24, 25);
+    clear(r, 33, 34);
+  }
+
+  // === FOUNDATION & BASE (tier 1 - Bronze) ===
+  for (let r = 36; r <= 45; r++) fill(r, 0, 47, 1);
+
+  // === ENTRANCE DOORWAY (clear) ===
+  for (let r = 37; r <= 41; r++) clear(r, 22, 27);
+
+  return grid;
+}
+
+export const MOSQUE_SHAPE = createMosqueShape();
 
 export function generateBlocks(): BlockData[] {
   const blocks: BlockData[] = [];
@@ -76,7 +105,6 @@ export function generateBlocks(): BlockData[] {
 // Generate some sample donated blocks for demo
 export function generateDemoBlocks(): BlockData[] {
   const blocks = generateBlocks();
-  // Fill some blocks randomly for demo
   const demoNames = ["Ahmed", "Fatima", "Omar", "Aisha", "Yusuf", "Khadija", "Ibrahim", "Maryam"];
   blocks.forEach((block, i) => {
     if (Math.random() < 0.25) {

@@ -27,7 +27,7 @@ export default function DonationBlock({ block, onClick, index }: DonationBlockPr
         <motion.button
           initial={{ opacity: 0, scale: 0.5 }}
           animate={{ opacity: 1, scale: 1 }}
-          transition={{ delay: index * 0.003, duration: 0.3 }}
+          transition={{ delay: index * 0.001, duration: 0.2 }}
           onClick={() => onClick(block)}
           className={`relative w-full aspect-square rounded-[2px] border overflow-hidden transition-all duration-200 cursor-pointer
             ${isFull ? `${colors.fill} ${colors.border}` : `bg-block-empty ${colors.border} hover:bg-block-hover`}
