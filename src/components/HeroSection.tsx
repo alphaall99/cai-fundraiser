@@ -18,13 +18,21 @@ export default function HeroSection() {
             Community Campaign
           </p>
           <h2 className="font-display text-4xl sm:text-5xl lg:text-6xl font-bold text-foreground leading-tight">
-            Build Our <span className="text-gradient-gold">Mosque</span>,<br />
+            Build Our <span className="text-gradient-gold">Community Center</span>,<br />
             One Block at a Time
           </h2>
           <p className="text-muted-foreground max-w-lg mx-auto text-base sm:text-lg leading-relaxed">
-            Each block represents a piece of our future mosque. Choose a block,
+            Each block represents a piece of our future community center. Choose a block,
             make a donation, and leave your mark on this sacred project.
           </p>
+          <div className="flex flex-col sm:flex-row gap-3 justify-center items-center mt-4">
+            <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-primary/10 text-primary text-xs font-medium">
+              🧾 Tax deductible — 50% returned to you
+            </span>
+            <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-secondary/20 text-secondary-foreground text-xs font-medium">
+              💯 100% goes to the community center via Zeffy — zero commissions
+            </span>
+          </div>
         </motion.div>
 
         <motion.div

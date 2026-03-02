@@ -46,7 +46,7 @@ export default function DonationModal({ block, open, onClose, onDonate }: Donati
   const handleDonate = () => {
     const amount = Number(donationAmount);
     onDonate(block.id, amount, name, label || name);
-    toast.success("Thank you for your generous donation! 🕌", {
+    toast.success("Thank you for your generous donation! 🤲", {
       description: `$${amount.toLocaleString()} donated to ${tier.label} block`,
     });
     resetAndClose();
@@ -169,9 +169,10 @@ export default function DonationModal({ block, open, onClose, onDonate }: Donati
                 </div>
               </div>
 
-              <p className="text-xs text-muted-foreground text-center">
-                This is a demo. In production, this would redirect to a secure payment gateway.
-              </p>
+              <div className="text-xs text-muted-foreground text-center space-y-1">
+                <p>🧾 Your donation is tax deductible — 50% will be returned to you.</p>
+                <p>💯 Processed by Zeffy — 0% commission, 100% goes to the community center.</p>
+              </div>
 
               <div className="flex gap-2">
                 <Button variant="outline" onClick={() => setStep("info")} className="flex-1">

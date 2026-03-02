@@ -1,5 +1,6 @@
 import { motion } from "framer-motion";
 import { Heart } from "lucide-react";
+import logo from "@/assets/logo_ccai.png";
 
 export default function SiteHeader() {
   return (
@@ -10,13 +11,10 @@ export default function SiteHeader() {
           animate={{ opacity: 1, x: 0 }}
           className="flex items-center gap-3"
         >
-          {/* Logo placeholder */}
-          <div className="w-10 h-10 rounded-lg bg-gradient-mosque flex items-center justify-center shadow-soft">
-            <span className="text-primary-foreground font-display font-bold text-lg">☪</span>
-          </div>
+          <img src={logo} alt="CCAI Logo" className="w-10 h-10 object-contain" />
           <div>
             <h1 className="font-display text-lg font-bold text-foreground leading-tight">
-              Masjid Al-Noor
+              Zad Al-Imane
             </h1>
             <p className="text-[11px] text-muted-foreground">Building Together, Block by Block</p>
           </div>
@@ -25,7 +23,7 @@ export default function SiteHeader() {
         <motion.a
           initial={{ opacity: 0, x: 20 }}
           animate={{ opacity: 1, x: 0 }}
-          href="#mosque"
+          href="#community-center"
           className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-primary text-primary-foreground text-sm font-medium hover:opacity-90 transition-opacity shadow-soft"
         >
           <Heart className="w-4 h-4" />
