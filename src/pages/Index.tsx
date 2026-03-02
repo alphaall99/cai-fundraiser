@@ -21,7 +21,7 @@ const Index = () => {
       </section>
 
       {/* Mosque Grid Section */}
-      <section id="mosque" className="container mx-auto px-4 py-10 space-y-6">
+      <section id="community-center" className="container mx-auto px-4 py-10 space-y-6">
         <div className="text-center space-y-2">
           <h3 className="font-display text-2xl font-bold text-foreground">
             Select a Block to Donate
@@ -45,7 +45,10 @@ const Index = () => {
             <span>Made with love for the community</span>
           </div>
           <p className="text-xs text-muted-foreground">
-            © 2026 Masjid Al-Noor Building Fund. All donations are tax-deductible.
+            © 2026 Zad Al-Imane Community Center Building Fund. All donations are tax-deductible.
+          </p>
+          <p className="text-xs text-muted-foreground">
+            Payments processed by Zeffy — 0% commission, 100% of your donation goes to the community center.
           </p>
         </div>
       </footer>

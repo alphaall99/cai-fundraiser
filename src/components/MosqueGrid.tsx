@@ -48,9 +48,9 @@ export default function MosqueGrid({ blocks, onBlocksChange }: MosqueGridProps) 
 
   return (
     <>
-      <div className="w-full max-w-5xl mx-auto">
+      <div className="w-full max-w-2xl mx-auto">
         <div
-          className="grid gap-[1px]"
+          className="grid gap-[2px]"
           style={{
             gridTemplateColumns: `repeat(${cols}, 1fr)`,
             gridTemplateRows: `repeat(${rows}, 1fr)`,
