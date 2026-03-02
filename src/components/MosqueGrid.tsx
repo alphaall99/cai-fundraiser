@@ -48,21 +48,20 @@ export default function MosqueGrid({ blocks, onBlocksChange }: MosqueGridProps) 
 
   return (
     <>
-      <div className="w-full max-w-2xl mx-auto">
+      <div className="w-full max-w-3xl mx-auto flex flex-col items-center">
         <div
-          className="grid gap-[2px]"
+          className="grid gap-[2px] w-full"
           style={{
-            gridTemplateColumns: `repeat(${cols}, 1fr)`,
-            gridTemplateRows: `repeat(${rows}, 1fr)`,
+            gridTemplateColumns: `repeat(${cols}, minmax(0, 1fr))`,
           }}
         >
           {MOSQUE_SHAPE.flatMap((row, r) =>
             row.map((cell, c) => {
               if (cell === 0) {
-                return <div key={`${r}-${c}`} className="aspect-square" />;
+                return <div key={`${r}-${c}`} />;
               }
               const block = blockMap.get(`block-${r}-${c}`);
-              if (!block) return <div key={`${r}-${c}`} className="aspect-square" />;
+              if (!block) return <div key={`${r}-${c}`} />;
               const idx = blockIndex++;
               return (
                 <DonationBlock

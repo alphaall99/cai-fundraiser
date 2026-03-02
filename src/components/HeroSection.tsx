@@ -44,7 +44,7 @@ export default function HeroSection() {
             href="#mosque"
             className="inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors"
           >
-            Explore the Mosque
+            Explore the Community Center
             <ChevronDown className="w-4 h-4 animate-bounce" />
           </a>
         </motion.div>

@@ -27,11 +27,11 @@ export default function DonationBlock({ block, onClick, index }: DonationBlockPr
         <motion.button
           initial={{ opacity: 0, scale: 0.5 }}
           animate={{ opacity: 1, scale: 1 }}
-          transition={{ delay: index * 0.001, duration: 0.2 }}
+          transition={{ delay: index * 0.003, duration: 0.2 }}
           onClick={() => onClick(block)}
-          className={`relative w-full aspect-square rounded-[2px] border overflow-hidden transition-all duration-200 cursor-pointer
+          className={`relative w-full aspect-square rounded-sm border overflow-hidden transition-all duration-200 cursor-pointer
             ${isFull ? `${colors.fill} ${colors.border}` : `bg-block-empty ${colors.border} hover:bg-block-hover`}
-            hover:shadow-soft hover:scale-110 hover:z-10
+            hover:shadow-soft hover:scale-105 hover:z-10
           `}
           aria-label={`${tier.label} block - $${tier.price} - ${Math.round(progress * 100)}% funded${block.donorLabel ? ` by ${block.donorLabel}` : ""}`}
         >
@@ -43,10 +43,12 @@ export default function DonationBlock({ block, onClick, index }: DonationBlockPr
             />
           )}
 
-          {/* Donor initial */}
-          {block.donorLabel && isFull && (
-            <span className="absolute inset-0 flex items-center justify-center text-[8px] font-bold text-primary-foreground leading-none">
-              {block.donorLabel.charAt(0)}
+          {/* Donor name - always visible when set */}
+          {block.donorLabel && (
+            <span className={`absolute inset-0 flex items-center justify-center text-[7px] sm:text-[9px] font-bold leading-none text-center px-0.5 truncate
+              ${isFull ? "text-primary-foreground" : "text-foreground/70"}
+            `}>
+              {block.donorLabel.length > 8 ? block.donorLabel.slice(0, 8) : block.donorLabel}
             </span>
           )}
         </motion.button>

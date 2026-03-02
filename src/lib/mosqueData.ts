@@ -21,10 +21,10 @@ export interface BlockData {
 }
 
 // Target: exactly 40 blocks per tier = 160 total blocks
-// Grid: 20 cols × 20 rows, mosque silhouette
+// Grid: 16 cols × 16 rows, compact mosque with blocks aligned to bottom
 function createMosqueShape(): number[][] {
-  const COLS = 20;
-  const ROWS = 20;
+  const COLS = 16;
+  const ROWS = 16;
   const grid: number[][] = Array.from({ length: ROWS }, () => Array(COLS).fill(0));
 
   const fill = (row: number, c1: number, c2: number, tier: number) => {
@@ -35,72 +35,61 @@ function createMosqueShape(): number[][] {
     }
   };
 
-  // === TIER 4 - Platinum (40 blocks): Minaret tip + dome peak ===
-  // Minaret tip (col 16): rows 0-4 = 5 blocks
-  for (let r = 0; r <= 4; r++) fill(r, 16, 16, 4);
-  // Minaret body top (cols 15-17): rows 5-6 = 6 blocks
-  for (let r = 5; r <= 6; r++) fill(r, 15, 17, 4);
-  // Dome peak: row 2, cols 7-9 = 3 blocks
-  fill(2, 7, 9, 4);
-  // Dome wider: row 3, cols 5-11 = 7 blocks
-  fill(3, 5, 11, 4);
-  // Dome widest: row 4, cols 4-12 = 9 blocks
-  fill(4, 4, 12, 4);
-  // Dome base: row 5, cols 3-12 = 10 blocks
-  fill(5, 3, 12, 4);
-  // Total tier 4: 5+6+3+7+9+10 = 40 ✓
+  // === TIER 4 - Platinum (40 blocks): Dome + minaret tip ===
+  // Minaret tip (col 13): rows 0-2 = 3
+  for (let r = 0; r <= 2; r++) fill(r, 13, 13, 4);
+  // Minaret upper (cols 12-14): rows 3-4 = 9
+  for (let r = 3; r <= 5; r++) fill(r, 12, 14, 4);
+  // Dome peak: row 3 cols 5-7 = 3
+  fill(3, 5, 7, 4);
+  // Dome mid: row 4 cols 3-9 = 7
+  fill(4, 3, 9, 4);
+  // Dome wide: row 5 cols 2-10 = 9
+  fill(5, 2, 10, 4);
+  // Dome base: row 6 cols 2-10 = 9
+  fill(6, 2, 10, 4);
+  // Total: 3+9+3+7+9+9 = 40 ✓
 
   // === TIER 3 - Gold (40 blocks): Upper walls + minaret body ===
-  // Minaret body (cols 15-17): rows 7-12 = 18 blocks
-  for (let r = 7; r <= 12; r++) fill(r, 15, 17, 3);
-  // Upper walls: row 6, cols 3-12 = 10 blocks
-  fill(6, 3, 12, 3);
-  // Upper walls: row 7, cols 3-12 = 10 (but skip 15-17 already filled)
-  fill(7, 3, 12, 3);
-  // Row 8 walls: cols 3-12 = 2 blocks (row 8 cols 3-4)
-  fill(8, 3, 4, 3);
-  // Total tier 3: 18+10+10+2 = 40 ✓
+  // Minaret body (cols 12-14): rows 6-11 = 18
+  for (let r = 6; r <= 11; r++) fill(r, 12, 14, 3);
+  // Upper wall row 7: cols 2-10 = 9
+  fill(7, 2, 10, 3);
+  // Upper wall row 8: cols 2-10 = 9
+  fill(8, 2, 10, 3);
+  // Row 9: cols 2-5 = 4
+  fill(9, 2, 5, 3);
+  // Total: 18+9+9+4 = 40 ✓
 
   // === TIER 2 - Silver (40 blocks): Main walls ===
-  // Rows 8-11, cols 3-14 (excluding already filled)
-  fill(8, 5, 14, 2);   // row 8: cols 5-14 = 10
-  fill(9, 3, 14, 2);   // row 9: cols 3-14 = 12
-  fill(10, 3, 14, 2);  // row 10: cols 3-14 = 12
-  fill(11, 3, 8, 2);   // row 11: cols 3-8 = 6
-  // Total tier 2: 10+12+12+6 = 40 ✓
+  // Row 9: cols 6-10 = 5
+  fill(9, 6, 10, 2);
+  // Row 10: cols 1-11 = 11
+  fill(10, 1, 11, 2);
+  // Row 11: cols 1-11 = 11
+  fill(11, 1, 11, 2);
+  // Row 12: cols 1-11 = 11, but cut door cols 5-7 = 8
+  fill(12, 1, 4, 2);
+  fill(12, 8, 11, 2);
+  // Row 13: cols 10-14 = 5 (side wall)
+  fill(13, 10, 14, 2);
+  // Total: 5+11+11+8+5 = 40 ✓
 
-  // === TIER 1 - Bronze (40 blocks): Lower walls + foundation ===
-  fill(11, 9, 14, 1);   // row 11: cols 9-14 = 6
-  fill(12, 3, 14, 1);   // row 12: cols 3-14 = 12
-  fill(13, 3, 14, 1);   // row 13: cols 3-14 = 12 (with door cutout later)
-  fill(14, 3, 14, 1);   // row 14: cols 3-14 = 12
-  // Clear entrance: rows 13-14, cols 7-9 = 6 blocks removed
-  for (let r = 13; r <= 14; r++) {
-    for (let c = 7; c <= 9; c++) {
-      grid[r][c] = 0;
-    }
-  }
-  // Foundation row 15: cols 1-17 = add remaining
-  fill(15, 1, 10, 1);  // 10 blocks
-  // Total tier 1: 6+12+12-3+12-3+10 = 6+12+9+9+10 = 46... need to adjust
-
-  // Let me recount and fix
-  // Clear everything and redo tier 1
-  for (let r = 11; r <= 19; r++) {
-    for (let c = 0; c < COLS; c++) {
-      if (grid[r][c] === 1) grid[r][c] = 0;
-    }
-  }
-
-  // Tier 1 precise: 40 blocks
-  fill(11, 9, 14, 1);   // 6
-  fill(12, 3, 14, 1);   // 12
-  fill(13, 3, 6, 1);    // 4
-  fill(13, 10, 14, 1);  // 5
-  fill(14, 3, 6, 1);    // 4
-  fill(14, 10, 14, 1);  // 5
-  fill(15, 3, 6, 1);    // 4
-  // 6+12+4+5+4+5+4 = 40 ✓
+  // === TIER 1 - Bronze (40 blocks): Foundation ===
+  // Row 12: cols 12-14 = 3
+  fill(12, 12, 14, 1);
+  // Row 13: cols 1-9 = 9 (with door cut cols 5-7 = 6)
+  fill(13, 1, 4, 1);
+  fill(13, 8, 9, 1);
+  // Row 14: cols 0-15 = 16
+  fill(14, 0, 15, 1);
+  // Row 15: cols 0-15 = 16, cut middle 5-7 = 13
+  fill(15, 0, 4, 1);
+  fill(15, 8, 15, 1);
+  // Total: 3+6+16+13 = 38... need 2 more
+  // Add row 13 cols 5-7 door area back? No, keep door. Add cols 5,7 at row 15
+  fill(15, 5, 6, 1); // +2
+  // Total: 3+6+16+13+2 = 40 ✓
 
   return grid;
 }
