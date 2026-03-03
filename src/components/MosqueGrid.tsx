@@ -86,75 +86,57 @@ export default function MosqueGrid({ blocks, onBlocksChange }: MosqueGridProps) 
     onBlocksChange(updated);
   };
 
-  // Sort blocks per tier: reserved (donated) first, then active, then locked
-  const sortedTierBlocks = useMemo(() => {
-    const result: { tierKey: TierKey; blocks: { block: BlockData; isLocked: boolean; isActive: boolean }[] }[] = [];
-
-    (Object.keys(TIERS) as unknown as TierKey[]).forEach((tierKey) => {
-      const tierNum = Number(tierKey) as TierKey;
-      const sequence = tierOrder[tierNum] || [];
-      const sorted: { block: BlockData; isLocked: boolean; isActive: boolean }[] = [];
-
-      const reserved: typeof sorted = [];
-      const active: typeof sorted = [];
-      const locked: typeof sorted = [];
-
-      sequence.forEach((id) => {
-        const block = blockMap.get(id);
-        if (!block) return;
-        const tier = TIERS[block.tier];
-        const isFull = block.donated >= tier.price;
-        const isActive = activeBlockIds.has(block.id);
-        const isLocked = !isActive && block.donated < tier.price;
-
-        if (isFull || (block.donated > 0 && !isActive)) {
-          reserved.push({ block, isLocked: false, isActive: false });
-        } else if (isActive) {
-          active.push({ block, isLocked: false, isActive: true });
-        } else {
-          locked.push({ block, isLocked: true, isActive: false });
-        }
-      });
-
-      sorted.push(...reserved, ...active, ...locked);
-      result.push({ tierKey: tierNum, blocks: sorted });
-    });
-
-    return result;
-  }, [blockMap, tierOrder, activeBlockIds]);
+  let blockIndex = 0;
 
   return (
     <>
       <div className="w-full flex justify-center">
         <div
-          className="relative w-full max-w-4xl rounded-3xl border shadow-lg overflow-hidden px-4 sm:px-8 pt-8 pb-10 sm:pb-12 bg-slate-900"
+          className="relative w-full max-w-none rounded-3xl border shadow-lg overflow-hidden px-2 sm:px-6 pt-8 pb-10 sm:pb-12 bg-slate-900"
           style={{
             backgroundImage:
-              "linear-gradient(to top, rgba(15,23,42,0.92), rgba(15,23,42,0.7), rgba(15,23,42,0.3)), url('/ecole.png')",
+              "linear-gradient(to top, rgba(15,23,42,0.88), rgba(15,23,42,0.55), rgba(15,23,42,0.15)), url('/ecole.png')",
             backgroundSize: "cover",
             backgroundPosition: "center",
           }}
         >
-          <div className="relative z-10 space-y-6">
-            {sortedTierBlocks.map(({ tierKey, blocks: tierBlocks }) => (
-              <div key={tierKey}>
-                <h3 className="text-sm font-semibold text-white/80 mb-2 uppercase tracking-wider">
-                  {TIERS[tierKey].label} — ${TIERS[tierKey].price.toLocaleString()}
-                </h3>
-                <div className="grid grid-cols-5 sm:grid-cols-8 md:grid-cols-10 gap-2">
-                  {tierBlocks.map(({ block, isLocked, isActive }, idx) => (
+          {/* Subtle ground glow behind the mosque */}
+          <div
+            className="pointer-events-none absolute inset-x-0 bottom-0 h-32 bg-gradient-to-t from-emerald-900/80 via-emerald-900/40 to-transparent"
+            aria-hidden="true"
+          />
+
+          {/* Mosque blocks kept intact, centered within the scene */}
+          <div className="relative z-10 flex flex-col items-center justify-center min-h-[220px] sm:min-h-[260px] md:min-h-[320px]">
+            <div
+              className="grid gap-[3px] w-full mx-auto bg-black/10 backdrop-blur-[2px] rounded-xl p-1.5 sm:p-2"
+              style={{
+                gridTemplateColumns: `repeat(${cols}, minmax(0, 1fr))`,
+              }}
+            >
+              {MOSQUE_SHAPE.flatMap((row, r) =>
+                row.map((cell, c) => {
+                  if (cell === 0) {
+                    return <div key={`${r}-${c}`} />;
+                  }
+                  const block = blockMap.get(`block-${r}-${c}`);
+                  if (!block) return <div key={`${r}-${c}`} />;
+              const isLocked =
+                !activeBlockIds.has(block.id) &&
+                block.donated < TIERS[block.tier].price;
+                  const idx = blockIndex++;
+                  return (
                     <DonationBlock
                       key={block.id}
                       block={block}
                       onClick={handleBlockClick}
                       locked={isLocked}
-                      active={isActive}
                       index={idx}
                     />
-                  ))}
-                </div>
-              </div>
-            ))}
+                  );
+                })
+              )}
+            </div>
           </div>
         </div>
       </div>
