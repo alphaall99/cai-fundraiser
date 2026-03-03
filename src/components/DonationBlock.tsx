@@ -7,6 +7,7 @@ interface DonationBlockProps {
   onClick: (block: BlockData) => void;
   index: number;
   locked?: boolean;
+  active?: boolean;
 }
 
 const tierColors: Record<number, { bg: string; fill: string; border: string }> = {
@@ -16,7 +17,7 @@ const tierColors: Record<number, { bg: string; fill: string; border: string }> =
   4: { bg: "bg-tier-4-light", fill: "bg-tier-4", border: "border-tier-4/30" },
 };
 
-export default function DonationBlock({ block, onClick, index, locked = false }: DonationBlockProps) {
+export default function DonationBlock({ block, onClick, index, locked = false, active = false }: DonationBlockProps) {
   const tier = TIERS[block.tier];
   const progress = tier.price > 0 ? block.donated / tier.price : 0;
   const colors = tierColors[block.tier];
@@ -34,11 +35,15 @@ export default function DonationBlock({ block, onClick, index, locked = false }:
             onClick(block);
           }}
           disabled={locked || isFull}
-          className={`relative w-full aspect-[5/3] rounded-sm border overflow-hidden transition-all duration-200
+          className={`relative w-full aspect-[5/3] rounded-sm border-2 overflow-hidden transition-all duration-200
             ${
-              locked || isFull
-                ? `bg-block-empty ${colors.border} cursor-not-allowed opacity-60`
-                : `${colors.bg} ${colors.border}hover:bg-block-hover cursor-pointer hover:shadow-soft hover:scale-105 hover:z-10`
+              isFull
+                ? `${colors.border} cursor-default opacity-90`
+                : locked
+                  ? `bg-block-empty border-muted/20 cursor-not-allowed opacity-40`
+                  : active
+                    ? `${colors.bg} border-primary ring-2 ring-primary/50 cursor-pointer hover:scale-105 hover:z-10 animate-pulse shadow-lg shadow-primary/20`
+                    : `${colors.bg} ${colors.border} cursor-pointer hover:shadow-soft hover:scale-105 hover:z-10`
             }
           `}
           aria-label={`${tier.label} block - $${tier.price} - ${Math.round(progress * 100)}% funded${block.donorLabel ? ` by ${block.donorLabel}` : ""}`}
