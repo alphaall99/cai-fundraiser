@@ -116,20 +116,107 @@ export function generateBlocks(): BlockData[] {
   return blocks;
 }
 
-// Generate some sample donated blocks for demo
+// Generate some sample donated blocks for demo, order (1) by progress descending and (2) by row/col (row major, left to right) within each tier
 export function generateDemoBlocks(): BlockData[] {
   const blocks = generateBlocks();
-  const demoNames = ["Ahmed", "Fatima", "Omar", "Aisha", "Yusuf", "Khadija", "Ibrahim", "Maryam"];
-  blocks.forEach((block, i) => {
-    if (Math.random() < 0.25) {
-      const tier = TIERS[block.tier];
-      const progress = Math.random();
-      block.donated = Math.round(tier.price * progress / 100) * 100;
-      if (progress > 0.8) {
-        block.donorName = demoNames[i % demoNames.length];
-        block.donorLabel = `${demoNames[i % demoNames.length]}`;
-      }
-    }
+  const demoDonationData = {
+    1: {
+      donated: 200,
+      donorName: "Ahmed",
+      donorLabel: "Ahmed",
+      tier: 1,
+    },
+    2: {
+      donated: 340,
+      donorName: "Fatima",
+      donorLabel: "Fatima",
+      tier: 1,
+    },
+    3: {
+      donated: 1503,
+      donorName: "Omar",
+      donorLabel: "Omar",
+      tier: 4,
+    },
+    4: {
+      donated: 997,
+      donorName: "Aisha",
+      donorLabel: "Aisha",
+      tier: 4,
+    },
+    5: {
+      donated: 1000,
+      donorName: "Yusuf",
+      donorLabel: "Yusuf",
+      tier: 2,
+    },
+    6: {
+      donated: 50,
+      donorName: "Khadija",
+      donorLabel: "Khadija",
+      tier: 2,
+    },
+    7: {
+      donated: 600,
+      donorName: "Ibrahim",
+      donorLabel: "Ibrahim",
+      tier: 3,
+    },
+    8: {
+      donated: 70,
+      donorName: "Maryam",
+      donorLabel: "Maryam",
+      tier: 1,
+    },
+  };
+
+  // Group data by tier
+  const groupedData: Record<TierKey, BlockData[]> = { 1: [], 2: [], 3: [], 4: [] };
+  Object.entries(demoDonationData).forEach(([_, data]) => {
+    if (groupedData[data.tier]) groupedData[data.tier].push(data);
+    else groupedData[data.tier] = [data];
   });
+
+  // Order each tier by progress descending
+  const orderedGroupedData: Record<TierKey, BlockData[]> = { 1: [], 2: [], 3: [], 4: [] };
+  Object.entries(groupedData).forEach(([tierKey, data]) => {
+    orderedGroupedData[tierKey] = data.sort((a, b) => b.donated - a.donated);
+    data.sort((a, b) => b.donated - a.donated);
+  });
+
+  // 4. Update the blocks array
+  // Loop through the tierKeys
+  const tierKeys: TierKey[] = [1, 2, 3, 4];
+
+  tierKeys.forEach((tierId) => {
+    // 2. Loop through the ordered group data for the given tier
+    const donations = orderedGroupedData[tierId];
+
+    donations.forEach((donation) => {
+      // 3. Loop through columns and rows to find the first empty block
+      // BOTTOM (15) to TOP (0)
+      let found = false;
+      for (let r = 15; r >= 0 && !found; r--) {
+        // LEFT (0) to RIGHT (15)
+        for (let c = 0; c <= 15 && !found; c++) {
+          
+          // Find the block in our array that matches this coordinate and tier
+          const block = blocks.find(b => b.row === r && b.col === c && b.tier === tierId);
+          
+          // Check if it's the right tier and currently empty (donated === 0)
+          if (block && block.donated === 0) {
+            // Fill it using the given data
+            block.donated = donation.donated;
+            block.donorName = donation.donorName;
+            block.donorLabel = donation.donorLabel;
+            
+            // 4. Break and go to the next element in the data
+            found = true; 
+          }
+        }
+      }
+    });
+  });
+
   return blocks;
 }

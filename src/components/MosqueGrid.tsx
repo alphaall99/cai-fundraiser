@@ -86,6 +86,26 @@ export default function MosqueGrid({ blocks, onBlocksChange }: MosqueGridProps) 
     onBlocksChange(updated);
   };
 
+  const isBlockLocked = (block: BlockData, allBlocks: BlockData[]) => {
+      // 1. If the block is already donated, it's "unlocked" (can be shown)
+      if (block.donated > 0) return false;
+    
+      const sameTierBlocks = allBlocks.filter(b => b.tier === block.tier);
+    
+      // 2. Sort the blocks in the same tier using your fill logic:
+      // Bottom-to-Top (Row Descending), then Left-to-Right (Col Ascending)
+      sameTierBlocks.sort((a, b) => {
+        if (a.row !== b.row) return b.row - a.row; // Higher row index (bottom) first
+        return a.col - b.col; // Lower col index (left) first
+      });
+    
+      // 3. Find the first block in this sorted list that has no donation
+      const nextAvailableBlock = sameTierBlocks.find(b => b.donated === 0);
+    
+      // 4. If this target block is NOT the next available one, it is locked
+      return block.id !== nextAvailableBlock?.id;
+    }
+
   let blockIndex = 0;
 
   return (
@@ -121,9 +141,7 @@ export default function MosqueGrid({ blocks, onBlocksChange }: MosqueGridProps) 
                   }
                   const block = blockMap.get(`block-${r}-${c}`);
                   if (!block) return <div key={`${r}-${c}`} />;
-              const isLocked =
-                !activeBlockIds.has(block.id) &&
-                block.donated < TIERS[block.tier].price;
+              const isLocked = isBlockLocked(block, blocks);
                   const idx = blockIndex++;
                   return (
                     <DonationBlock

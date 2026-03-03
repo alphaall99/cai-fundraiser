@@ -34,11 +34,17 @@ export default function DonationBlock({ block, onClick, index, locked = false }:
             onClick(block);
           }}
           disabled={locked || isFull}
-          className={`relative w-full aspect-[5/3] rounded-sm border overflow-hidden transition-all duration-200
+          className={`relative w-full aspect-[5/3] rounded-md border-2 overflow-hidden transition-all duration-200
             ${
-              locked || isFull
-                ? `bg-block-empty ${colors.border} cursor-not-allowed opacity-60`
-                : `${colors.bg} ${colors.border}hover:bg-block-hover cursor-pointer hover:shadow-soft hover:scale-105 hover:z-10`
+              locked
+                ? `bg-slate-500/40 ${colors.border} border-dashed cursor-not-allowed opacity-80 grayscale-[0.35]`
+                : isFull
+                  ? `${colors.bg} ${colors.border} cursor-default shadow-[0_0_0_2px_#a5e37b88,0_1px_8px_#458c3788] border-green-300/80 ring-2 ring-green-400/60 opacity-100`
+                  : block.donated > 0
+                    ? `${colors.bg} ${colors.border} border-2 cursor-default opacity-95`
+                    : 
+                      // Not locked and not donated: stand out, vivid hover, subtle border glow, highlight border
+                      `${colors.bg} ${colors.border} border-blue-400/90 hover:ring-2 hover:ring-blue-300 cursor-pointer shadow-[0_2px_8px_-4px_#38bdf83f] hover:shadow-lg animate-[pulseBorder_1.8s_cubic-bezier(.4,0,.2,1)_infinite] hover:scale-110 hover:z-20`
             }
           `}
           aria-label={`${tier.label} block - $${tier.price} - ${Math.round(progress * 100)}% funded${block.donorLabel ? ` by ${block.donorLabel}` : ""}`}
