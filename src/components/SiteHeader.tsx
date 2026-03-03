@@ -14,7 +14,7 @@ export default function SiteHeader() {
           <img src={logo} alt="CCAI Logo" className="w-10 h-10 object-contain" />
           <div>
             <h1 className="font-display text-lg font-bold text-foreground leading-tight">
-              Zad Al-Imane
+              Centre Zad Al-Imane
             </h1>
             <p className="text-[11px] text-muted-foreground">Building Together, Block by Block</p>
           </div>

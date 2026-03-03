@@ -113,7 +113,7 @@ export default function DonationModal({ block, open, onClose, onDonate }: Donati
                 <Label htmlFor="donor-label">Display Label (optional)</Label>
                 <Input
                   id="donor-label"
-                  placeholder="e.g. The Smith Family"
+                  placeholder="e.g. Ali Family"
                   value={label}
                   onChange={(e) => setLabel(e.target.value)}
                 />

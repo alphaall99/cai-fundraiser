@@ -127,7 +127,7 @@ export function generateDemoBlocks(): BlockData[] {
       block.donated = Math.round(tier.price * progress / 100) * 100;
       if (progress > 0.8) {
         block.donorName = demoNames[i % demoNames.length];
-        block.donorLabel = `${demoNames[i % demoNames.length]}'s Family`;
+        block.donorLabel = `${demoNames[i % demoNames.length]}`;
       }
     }
   });

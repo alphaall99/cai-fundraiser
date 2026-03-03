@@ -6,6 +6,7 @@ interface DonationBlockProps {
   block: BlockData;
   onClick: (block: BlockData) => void;
   index: number;
+  locked?: boolean;
 }
 
 const tierColors: Record<number, { bg: string; fill: string; border: string }> = {
@@ -15,7 +16,7 @@ const tierColors: Record<number, { bg: string; fill: string; border: string }> =
   4: { bg: "bg-tier-4-light", fill: "bg-tier-4", border: "border-tier-4/30" },
 };
 
-export default function DonationBlock({ block, onClick, index }: DonationBlockProps) {
+export default function DonationBlock({ block, onClick, index, locked = false }: DonationBlockProps) {
   const tier = TIERS[block.tier];
   const progress = tier.price > 0 ? block.donated / tier.price : 0;
   const colors = tierColors[block.tier];
@@ -28,10 +29,17 @@ export default function DonationBlock({ block, onClick, index }: DonationBlockPr
           initial={{ opacity: 0, scale: 0.5 }}
           animate={{ opacity: 1, scale: 1 }}
           transition={{ delay: index * 0.003, duration: 0.2 }}
-          onClick={() => onClick(block)}
-          className={`relative w-full aspect-square rounded-sm border overflow-hidden transition-all duration-200 cursor-pointer
-            ${isFull ? `${colors.fill} ${colors.border}` : `bg-block-empty ${colors.border} hover:bg-block-hover`}
-            hover:shadow-soft hover:scale-105 hover:z-10
+          onClick={() => {
+            if (locked || isFull) return;
+            onClick(block);
+          }}
+          disabled={locked || isFull}
+          className={`relative w-full aspect-[5/3] rounded-sm border overflow-hidden transition-all duration-200
+            ${
+              locked || isFull
+                ? `bg-block-empty ${colors.border} cursor-not-allowed opacity-60`
+                : `${colors.bg} ${colors.border}hover:bg-block-hover cursor-pointer hover:shadow-soft hover:scale-105 hover:z-10`
+            }
           `}
           aria-label={`${tier.label} block - $${tier.price} - ${Math.round(progress * 100)}% funded${block.donorLabel ? ` by ${block.donorLabel}` : ""}`}
         >
@@ -43,12 +51,20 @@ export default function DonationBlock({ block, onClick, index }: DonationBlockPr
             />
           )}
 
+          {isFull && (
+            <div
+              className={`absolute bottom-0 left-0 right-0 ${colors.fill} opacity-70 transition-all duration-700 border-2 border-green-300`}
+              style={{ height: `100%` }}
+            />
+          )}
+
           {/* Donor name - always visible when set */}
           {block.donorLabel && (
-            <span className={`absolute inset-0 flex items-center justify-center text-[7px] sm:text-[9px] font-bold leading-none text-center px-0.5 truncate
-              ${isFull ? "text-primary-foreground" : "text-foreground/70"}
-            `}>
-              {block.donorLabel.length > 8 ? block.donorLabel.slice(0, 8) : block.donorLabel}
+            <span
+              className={`absolute inset-0 flex items-center justify-center text-[9px] sm:text-[11px] md:text-[12px] font-semibold leading-tight text-center px-1 sm:px-1.5 truncate
+              ${isFull ? "text-white" : "text-white/90"} drop-shadow-[0_1px_2px_rgba(0,0,0,0.75)]`}
+            >
+              {block.donorLabel.length > 14 ? block.donorLabel.slice(0, 14) : block.donorLabel}
             </span>
           )}
         </motion.button>
@@ -56,12 +72,11 @@ export default function DonationBlock({ block, onClick, index }: DonationBlockPr
       <TooltipContent side="top" className="text-xs">
         <p className="font-semibold">{tier.label} — ${tier.price.toLocaleString()}</p>
         <p className="text-muted-foreground">
-          {block.donated > 0
-            ? `$${block.donated.toLocaleString()} donated (${Math.round(progress * 100)}%)`
-            : "Available for donation"}
+          {block.donated > 0 && !locked && `$${block.donated.toLocaleString()} donated (${Math.round(progress * 100)}%)`}
+          {block.donated === 0 && !locked && "Available for donation"}
+          {block.donated === 0 && locked && "Not yet available for donation"}
+          {block.donated > 0 && locked && `$${block.donated.toLocaleString()} donated (${Math.round(progress * 100)}%)`}
         </p>
         {block.donorLabel && <p className="text-primary font-medium">{block.donorLabel}</p>}
       </TooltipContent>
-    </Tooltip>
-  );
-}
+    </Tooltip>)}
