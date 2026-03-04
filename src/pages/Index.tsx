@@ -1,5 +1,5 @@
-import { useState } from "react";
-import { generateDemoBlocks } from "@/lib/mosqueData";
+import { useState, useEffect } from "react";
+import { generateDemoBlocks, fetchDonationDataFromSheet } from "@/lib/mosqueData";
 import SiteHeader from "@/components/SiteHeader";
 import HeroSection from "@/components/HeroSection";
 import MosqueGrid from "@/components/MosqueGrid";
@@ -8,7 +8,38 @@ import TierLegend from "@/components/TierLegend";
 import { Heart } from "lucide-react";
 
 const Index = () => {
-  const [blocks, setBlocks] = useState(() => generateDemoBlocks());
+  const [blocks, setBlocks] = useState(() => generateDemoBlocks([]));
+  const [refreshInSeconds, setRefreshInSeconds] = useState(30);
+
+  useEffect(() => {
+    let isMounted = true;
+
+    const load = async () => {
+      const rows = await fetchDonationDataFromSheet();
+      if (!isMounted) return;
+      setBlocks(generateDemoBlocks(rows));
+    };
+
+    // Initial load
+    load();
+
+    // Countdown + periodic refresh every 30s
+    const intervalId = window.setInterval(() => {
+      setRefreshInSeconds((prev) => {
+        if (prev <= 1) {
+          // Time to refresh and reset countdown
+          void load();
+          return 30;
+        }
+        return prev - 1;
+      });
+    }, 1000);
+
+    return () => {
+      isMounted = false;
+      window.clearInterval(intervalId);
+    };
+  }, []);
 
   return (
     <div className="min-h-screen bg-background">
@@ -29,6 +60,9 @@ const Index = () => {
           <p className="text-sm text-muted-foreground max-w-md mx-auto">
             Click any block to contribute. Blocks fill with color as donations progress.
             Hover to see details.
+          </p>
+          <p className="text-xs text-muted-foreground">
+            Updating in <span className="font-semibold">{refreshInSeconds}s</span>…
           </p>
         </div>
 

@@ -20,6 +20,78 @@ export interface BlockData {
   donorLabel: string | null;
 }
 
+/** One row of donation input (e.g. from CSV); matches the schema consumed by generateDemoBlocks */
+export interface DonationRow {
+  tier: TierKey;
+  donated: number;
+  donorName: string;
+  donorLabel: string;
+}
+
+/** Google Sheet CSV export URL (e.g. .../export?format=csv). Set VITE_GOOGLE_SHEET_CSV_URL in .env */
+const DEFAULT_SHEET_CSV_URL =
+  (typeof import.meta !== "undefined" && (import.meta as { env?: Record<string, string> }).env?.VITE_GOOGLE_SHEET_CSV_URL) ||
+  "";
+
+/** Parse CSV text into DonationRow[]; first row is header (tier, donated, donorName, donorLabel). */
+export function parseCsvToDonationRows(csvText: string): DonationRow[] {
+  const lines = csvText.trim().split(/\r?\n/);
+  if (lines.length < 2) return [];
+
+  const header = lines[0].split(",").map((h) => h.trim().toLowerCase().replace(/\s+/g, ""));
+  const tierIdx = header.findIndex((h) => h === "tier");
+  const donatedIdx = header.findIndex((h) => h === "donated");
+  const donorNameIdx = header.findIndex((h) => h === "donorname" || h === "name");
+  const donorLabelIdx = header.findIndex((h) => h === "donorlabel" || h === "displaylabel" || h === "label");
+  if (tierIdx === -1 || donatedIdx === -1 || donorNameIdx === -1) return [];
+
+  const rows: DonationRow[] = [];
+  for (let i = 1; i < lines.length; i++) {
+    const values = parseCsvLine(lines[i]);
+    const tierNum = parseInt(values[tierIdx] ?? "0", 10);
+    const tier = (tierNum >= 1 && tierNum <= 4 ? tierNum : 1) as TierKey;
+    const donated = Math.max(0, parseInt(values[donatedIdx] ?? "0", 10) || 0);
+    const donorName = (values[donorNameIdx] ?? "").trim() || "Anonymous";
+    const donorLabel = donorLabelIdx >= 0 ? (values[donorLabelIdx] ?? "").trim() || donorName : donorName;
+    rows.push({ tier, donated, donorName, donorLabel });
+  }
+  return rows;
+}
+
+function parseCsvLine(line: string): string[] {
+  const out: string[] = [];
+  let cur = "";
+  let inQuotes = false;
+  for (let i = 0; i < line.length; i++) {
+    const ch = line[i];
+    if (ch === '"') {
+      inQuotes = !inQuotes;
+    } else if (ch === "," && !inQuotes) {
+      out.push(cur);
+      cur = "";
+    } else {
+      cur += ch;
+    }
+  }
+  out.push(cur);
+  return out;
+}
+
+/** Fetch Google Sheet CSV export and return parsed DonationRow[]. Returns [] on error or if URL not set. */
+export async function fetchDonationDataFromSheet(sheetUrl?: string): Promise<DonationRow[]> {
+  const url = sheetUrl || DEFAULT_SHEET_CSV_URL;
+  if (!url) return [];
+  const csvUrl = url.replace(/\/edit.*$/, '/export?format=csv');
+  try {
+    const res = await fetch(csvUrl, { cache: "no-store" });
+    if (!res.ok) return [];
+    const text = await res.text();
+    return parseCsvToDonationRows(text);
+  } catch {
+    return [];
+  }
+}
+
 // Target: exactly 40 blocks per tier = 160 total blocks
 // Grid: 16 cols × 16 rows, compact mosque with blocks aligned to bottom
 function createMosqueShape(): number[][] {
@@ -116,78 +188,26 @@ export function generateBlocks(): BlockData[] {
   return blocks;
 }
 
-// Generate some sample donated blocks for demo, order (1) by progress descending and (2) by row/col (row major, left to right) within each tier
-export function generateDemoBlocks(): BlockData[] {
+// Apply donation data to blocks; order (1) by progress descending and (2) by row/col (row major, left to right) within each tier. Transformation logic unchanged.
+export function generateDemoBlocks(donationData: DonationRow[]): BlockData[] {
   const blocks = generateBlocks();
-  const demoDonationData = {
-    1: {
-      donated: 200,
-      donorName: "Ahmed",
-      donorLabel: "Ahmed",
-      tier: 1,
-    },
-    2: {
-      donated: 340,
-      donorName: "Fatima",
-      donorLabel: "Fatima",
-      tier: 1,
-    },
-    3: {
-      donated: 1503,
-      donorName: "Omar",
-      donorLabel: "Omar",
-      tier: 4,
-    },
-    4: {
-      donated: 997,
-      donorName: "Aisha",
-      donorLabel: "Aisha",
-      tier: 4,
-    },
-    5: {
-      donated: 1000,
-      donorName: "Yusuf",
-      donorLabel: "Yusuf",
-      tier: 2,
-    },
-    6: {
-      donated: 50,
-      donorName: "Khadija",
-      donorLabel: "Khadija",
-      tier: 2,
-    },
-    7: {
-      donated: 600,
-      donorName: "Ibrahim",
-      donorLabel: "Ibrahim",
-      tier: 3,
-    },
-    8: {
-      donated: 70,
-      donorName: "Maryam",
-      donorLabel: "Maryam",
-      tier: 1,
-    },
-  };
 
   // Group data by tier
-  const groupedData: Record<TierKey, BlockData[]> = { 1: [], 2: [], 3: [], 4: [] };
-  Object.entries(demoDonationData).forEach(([_, data]) => {
+  const groupedData: Record<TierKey, DonationRow[]> = { 1: [], 2: [], 3: [], 4: [] };
+  donationData.forEach((data) => {
     if (groupedData[data.tier]) groupedData[data.tier].push(data);
     else groupedData[data.tier] = [data];
   });
 
   // Order each tier by progress descending
-  const orderedGroupedData: Record<TierKey, BlockData[]> = { 1: [], 2: [], 3: [], 4: [] };
-  Object.entries(groupedData).forEach(([tierKey, data]) => {
-    orderedGroupedData[tierKey] = data.sort((a, b) => b.donated - a.donated);
-    data.sort((a, b) => b.donated - a.donated);
+  const orderedGroupedData: Record<TierKey, DonationRow[]> = { 1: [], 2: [], 3: [], 4: [] };
+  const tierKeys: TierKey[] = [1, 2, 3, 4];
+  tierKeys.forEach((tierKey) => {
+    const data = groupedData[tierKey];
+    orderedGroupedData[tierKey] = [...data].sort((a, b) => b.donated - a.donated);
   });
 
   // 4. Update the blocks array
-  // Loop through the tierKeys
-  const tierKeys: TierKey[] = [1, 2, 3, 4];
-
   tierKeys.forEach((tierId) => {
     // 2. Loop through the ordered group data for the given tier
     const donations = orderedGroupedData[tierId];

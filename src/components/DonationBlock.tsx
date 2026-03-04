@@ -64,13 +64,15 @@ export default function DonationBlock({ block, onClick, index, locked = false }:
             />
           )}
 
-          {/* Donor name - always visible when set */}
+          {/* Donor name - always visible when set, allow wrapping for 2–3 words */}
           {block.donorLabel && (
             <span
-              className={`absolute inset-0 flex items-center justify-center text-[9px] sm:text-[11px] md:text-[12px] font-semibold leading-tight text-center px-1 sm:px-1.5 truncate
-              ${isFull ? "text-white" : "text-white/90"} drop-shadow-[0_1px_2px_rgba(0,0,0,0.75)]`}
+              className={`absolute inset-0 flex items-center justify-center px-1 sm:px-1.5 text-[8px] xs:text-[9px] sm:text-[11px] md:text-[12px] font-semibold leading-tight text-center
+              ${isFull ? "text-white" : "text-white/90"} drop-shadow-[0_1px_2px_rgba(0,0,0,0.75)] break-words`}
             >
-              {block.donorLabel.length > 14 ? block.donorLabel.slice(0, 14) : block.donorLabel}
+              <span className="max-h-[2.4em] sm:max-h-[2.6em] overflow-hidden">
+                {block.donorLabel}
+              </span>
             </span>
           )}
         </motion.button>
