@@ -45,16 +45,16 @@
     --cream: 40 33% 96%;
     --cream-dark: 38 18% 90%;
 
-    /* Tier colors */
-    --tier-1: 160 40% 45%;
-    --tier-2: 38 70% 55%;
-    --tier-3: 262 45% 50%;
-    --tier-4: 340 60% 50%;
+    /* Tier colors - metallic */
+    --tier-1: 30 50% 50%;
+    --tier-2: 210 5% 68%;
+    --tier-3: 43 72% 50%;
+    --tier-4: 210 5% 78%;
 
-    --tier-1-light: 160 40% 85%;
-    --tier-2-light: 38 70% 85%;
-    --tier-3-light: 262 45% 85%;
-    --tier-4-light: 340 60% 85%;
+    --tier-1-light: 30 40% 88%;
+    --tier-2-light: 210 5% 92%;
+    --tier-3-light: 43 60% 88%;
+    --tier-4-light: 210 5% 94%;
 
     /* Block states */
     --block-empty: 40 15% 92%;
