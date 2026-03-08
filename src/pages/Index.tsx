@@ -1,5 +1,5 @@
-import { useState, useEffect } from "react";
-import { generateDemoBlocks, fetchDonationDataFromSheet } from "@/lib/mosqueData";
+import { useState } from "react";
+import { generateDemoBlocks } from "@/lib/mosqueData";
 import SiteHeader from "@/components/SiteHeader";
 import HeroSection from "@/components/HeroSection";
 import MosqueGrid from "@/components/MosqueGrid";
@@ -8,38 +8,7 @@ import TierLegend from "@/components/TierLegend";
 import { Heart } from "lucide-react";
 
 const Index = () => {
-  const [blocks, setBlocks] = useState(() => generateDemoBlocks([]));
-  const [refreshInSeconds, setRefreshInSeconds] = useState(30);
-
-  useEffect(() => {
-    let isMounted = true;
-
-    const load = async () => {
-      const rows = await fetchDonationDataFromSheet();
-      if (!isMounted) return;
-      setBlocks(generateDemoBlocks(rows));
-    };
-
-    // Initial load
-    load();
-
-    // Countdown + periodic refresh every 30s
-    const intervalId = window.setInterval(() => {
-      setRefreshInSeconds((prev) => {
-        if (prev <= 1) {
-          // Time to refresh and reset countdown
-          void load();
-          return 30;
-        }
-        return prev - 1;
-      });
-    }, 1000);
-
-    return () => {
-      isMounted = false;
-      window.clearInterval(intervalId);
-    };
-  }, []);
+  const [blocks, setBlocks] = useState(() => generateDemoBlocks());
 
   return (
     <div className="min-h-screen bg-background">
@@ -52,7 +21,7 @@ const Index = () => {
       </section>
 
       {/* Mosque Grid Section */}
-      <section id="community-center" className="container mx-auto px-4 py-10 space-y-6">
+      <section id="mosque" className="container mx-auto px-4 py-10 space-y-6">
         <div className="text-center space-y-2">
           <h3 className="font-display text-2xl font-bold text-foreground">
             Select a Block to Donate
@@ -60,9 +29,6 @@ const Index = () => {
           <p className="text-sm text-muted-foreground max-w-md mx-auto">
             Click any block to contribute. Blocks fill with color as donations progress.
             Hover to see details.
-          </p>
-          <p className="text-xs text-muted-foreground">
-            Updating in <span className="font-semibold">{refreshInSeconds}s</span>…
           </p>
         </div>
 
@@ -79,10 +45,7 @@ const Index = () => {
             <span>Made with love for the community</span>
           </div>
           <p className="text-xs text-muted-foreground">
-            © 2026 Zad Al-Imane Community Center Building Fund. All donations are tax-deductible.
-          </p>
-          <p className="text-xs text-muted-foreground">
-            Payments processed by Zeffy — 0% commission, 100% of your donation goes to the community center.
+            © 2026 Masjid Al-Noor Building Fund. All donations are tax-deductible.
           </p>
         </div>
       </footer>

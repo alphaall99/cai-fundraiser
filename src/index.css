@@ -47,15 +47,13 @@
 
     /* Tier colors */
     --tier-1: 160 40% 45%;
-    /* Silver */
-    --tier-2: 210 9% 75%;
-    /* Gold */
-    --tier-3: 45 90% 55%;
+    --tier-2: 38 70% 55%;
+    --tier-3: 262 45% 50%;
     --tier-4: 340 60% 50%;
 
     --tier-1-light: 160 40% 85%;
-    --tier-2-light: 210 9% 88%;
-    --tier-3-light: 45 90% 78%;
+    --tier-2-light: 38 70% 85%;
+    --tier-3-light: 262 45% 85%;
     --tier-4-light: 340 60% 85%;
 
     /* Block states */
