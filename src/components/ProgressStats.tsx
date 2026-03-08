@@ -6,10 +6,10 @@ interface ProgressStatsProps {
 }
 
 const tierStyles: Record<number, { gradient: string; label: string }> = {
-  1: { gradient: "from-tier-1 to-emerald-light", label: "Bronze · 500 $" },
-  2: { gradient: "from-tier-2 to-gold-light", label: "Argent · 1 000 $" },
-  3: { gradient: "from-tier-3 to-purple-400", label: "Or · 1 500 $" },
-  4: { gradient: "from-tier-4 to-pink-400", label: "Platine · 2 000 $" },
+  1: { gradient: "from-tier-1 to-amber-600", label: "Bronze · 500 $" },
+  2: { gradient: "from-tier-2 to-gray-400", label: "Argent · 1 000 $" },
+  3: { gradient: "from-tier-3 to-yellow-400", label: "Or · 1 500 $" },
+  4: { gradient: "from-tier-4 to-gray-300", label: "Platine · 2 000 $" },
 };
 
 export default function ProgressStats({ blocks }: ProgressStatsProps) {
@@ -39,7 +39,7 @@ export default function ProgressStats({ blocks }: ProgressStatsProps) {
         </div>
         <div className="w-full max-w-md mx-auto h-3 bg-muted rounded-full overflow-hidden">
           <motion.div
-            className="h-full bg-gradient-to-r from-primary via-secondary to-gold rounded-full"
+            className="h-full bg-gradient-to-r from-tier-1 via-tier-3 to-tier-4 rounded-full"
             initial={{ width: 0 }}
             animate={{ width: `${overallProgress * 100}%` }}
             transition={{ duration: 1.2, ease: "easeOut" }}

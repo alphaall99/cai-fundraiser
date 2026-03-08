@@ -1,10 +1,10 @@
 import { TIERS, TierKey } from "@/lib/mosqueData";
 
 const tierVisuals: Record<number, { gradient: string; description: string }> = {
-  1: { gradient: "from-tier-1 to-emerald-light", description: "Fondation et murs" },
-  2: { gradient: "from-tier-2 to-gold-light", description: "Éléments structurels" },
-  3: { gradient: "from-tier-3 to-purple-400", description: "Dôme et minaret" },
-  4: { gradient: "from-tier-4 to-pink-400", description: "Sommet du dôme" },
+  1: { gradient: "from-tier-1 to-amber-600", description: "Fondation et murs" },
+  2: { gradient: "from-tier-2 to-gray-400", description: "Éléments structurels" },
+  3: { gradient: "from-tier-3 to-yellow-400", description: "Dôme et minaret" },
+  4: { gradient: "from-tier-4 to-gray-300", description: "Sommet du dôme" },
 };
 
 export default function TierLegend() {
