@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
 import { generateDemoBlocks } from "@/lib/mosqueData";
 import SiteHeader from "@/components/SiteHeader";
 import HeroSection from "@/components/HeroSection";
@@ -10,6 +10,19 @@ import { Heart } from "lucide-react";
 
 const Index = () => {
   const [blocks, setBlocks] = useState(() => generateDemoBlocks());
+  const gridRef = useRef<HTMLDivElement>(null);
+  const [gridHeight, setGridHeight] = useState<number | null>(null);
+
+  useEffect(() => {
+    if (!gridRef.current) return;
+    const observer = new ResizeObserver((entries) => {
+      for (const entry of entries) {
+        setGridHeight(entry.contentRect.height);
+      }
+    });
+    observer.observe(gridRef.current);
+    return () => observer.disconnect();
+  }, []);
 
   return (
     <div className="min-h-screen bg-background">
@@ -23,16 +36,17 @@ const Index = () => {
 
       {/* Section grille + résumé */}
       <section id="mosque" className="container mx-auto px-4 py-10">
-        <div className="flex flex-col lg:flex-row gap-6">
+        <div className="flex flex-col lg:flex-row gap-6 lg:items-start">
           {/* Colonne gauche : résumé des dons */}
-          <aside className="w-full lg:w-80 shrink-0 order-2 lg:order-1">
-            <div className="lg:sticky lg:top-4">
-              <DonationSummary blocks={blocks} />
-            </div>
+          <aside
+            className="w-full lg:w-80 shrink-0 order-2 lg:order-1 overflow-y-auto"
+            style={gridHeight ? { maxHeight: gridHeight } : undefined}
+          >
+            <DonationSummary blocks={blocks} />
           </aside>
 
           {/* Colonne droite : grille */}
-          <div className="flex-1 space-y-6 order-1 lg:order-2">
+          <div ref={gridRef} className="flex-1 space-y-6 order-1 lg:order-2">
             <div className="text-center space-y-2">
               <h3 className="font-display text-2xl font-bold text-foreground">
                 Sélectionnez un bloc pour donner
