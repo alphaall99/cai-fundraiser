@@ -6,10 +6,10 @@ interface ProgressStatsProps {
 }
 
 const tierStyles: Record<number, { gradient: string; label: string }> = {
-  1: { gradient: "from-tier-1 to-emerald-light", label: "Bronze · $500" },
-  2: { gradient: "from-tier-2 to-gold-light", label: "Silver · $1,000" },
-  3: { gradient: "from-tier-3 to-purple-400", label: "Gold · $2,500" },
-  4: { gradient: "from-tier-4 to-pink-400", label: "Platinum · $5,000" },
+  1: { gradient: "from-tier-1 to-emerald-light", label: "Bronze · 500 $" },
+  2: { gradient: "from-tier-2 to-gold-light", label: "Argent · 1 000 $" },
+  3: { gradient: "from-tier-3 to-purple-400", label: "Or · 1 500 $" },
+  4: { gradient: "from-tier-4 to-pink-400", label: "Platine · 2 000 $" },
 };
 
 export default function ProgressStats({ blocks }: ProgressStatsProps) {
@@ -17,7 +17,6 @@ export default function ProgressStats({ blocks }: ProgressStatsProps) {
   const totalDonated = blocks.reduce((sum, b) => sum + b.donated, 0);
   const overallProgress = totalGoal > 0 ? totalDonated / totalGoal : 0;
 
-  // Per-tier stats
   const tierStats = ([1, 2, 3, 4] as TierKey[]).map((tier) => {
     const tierBlocks = blocks.filter((b) => b.tier === tier);
     const goal = tierBlocks.reduce((s, b) => s + TIERS[b.tier].price, 0);
@@ -28,15 +27,14 @@ export default function ProgressStats({ blocks }: ProgressStatsProps) {
 
   return (
     <div className="space-y-6">
-      {/* Overall progress */}
       <div className="text-center space-y-3">
-        <h3 className="font-display text-2xl font-bold text-foreground">Campaign Progress</h3>
+        <h3 className="font-display text-2xl font-bold text-foreground">Progression de la campagne</h3>
         <div className="flex items-baseline justify-center gap-1">
           <span className="text-4xl font-display font-bold text-gradient-gold">
-            ${totalDonated.toLocaleString()}
+            {totalDonated.toLocaleString()} $
           </span>
           <span className="text-muted-foreground text-lg">
-            / ${totalGoal.toLocaleString()}
+            / {totalGoal.toLocaleString()} $
           </span>
         </div>
         <div className="w-full max-w-md mx-auto h-3 bg-muted rounded-full overflow-hidden">
@@ -47,10 +45,9 @@ export default function ProgressStats({ blocks }: ProgressStatsProps) {
             transition={{ duration: 1.2, ease: "easeOut" }}
           />
         </div>
-        <p className="text-sm text-muted-foreground">{Math.round(overallProgress * 100)}% of goal reached</p>
+        <p className="text-sm text-muted-foreground">{Math.round(overallProgress * 100)} % de l'objectif atteint</p>
       </div>
 
-      {/* Tier breakdown */}
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
         {tierStats.map(({ tier, goal, donated, total, filled }) => {
           const style = tierStyles[tier];
@@ -69,7 +66,7 @@ export default function ProgressStats({ blocks }: ProgressStatsProps) {
                 />
               </div>
               <p className="text-[10px] text-muted-foreground">
-                {filled}/{total} blocks filled
+                {filled}/{total} blocs remplis
               </p>
             </div>
           );
