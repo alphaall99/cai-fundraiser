@@ -15,20 +15,20 @@ const Index = () => {
       <SiteHeader />
       <HeroSection />
 
-      {/* Stats Section */}
+      {/* Section statistiques */}
       <section className="container mx-auto px-4 py-10">
         <ProgressStats blocks={blocks} />
       </section>
 
-      {/* Mosque Grid Section */}
+      {/* Section grille du centre */}
       <section id="mosque" className="container mx-auto px-4 py-10 space-y-6">
         <div className="text-center space-y-2">
           <h3 className="font-display text-2xl font-bold text-foreground">
-            Select a Block to Donate
+            Sélectionnez un bloc pour donner
           </h3>
           <p className="text-sm text-muted-foreground max-w-md mx-auto">
-            Click any block to contribute. Blocks fill with color as donations progress.
-            Hover to see details.
+            Cliquez sur un bloc pour contribuer. Les blocs se remplissent de couleur
+            à mesure que les dons progressent. Survolez pour voir les détails.
           </p>
         </div>
 
@@ -37,15 +37,15 @@ const Index = () => {
         <MosqueGrid blocks={blocks} onBlocksChange={setBlocks} />
       </section>
 
-      {/* Footer */}
+      {/* Pied de page */}
       <footer className="border-t border-border/50 py-8 mt-12">
         <div className="container mx-auto px-4 text-center space-y-2">
           <div className="flex items-center justify-center gap-2 text-muted-foreground text-sm">
             <Heart className="w-4 h-4 text-secondary" />
-            <span>Made with love for the community</span>
+            <span>Fait avec amour pour la communauté</span>
           </div>
           <p className="text-xs text-muted-foreground">
-            © 2026 Masjid Al-Noor Building Fund. All donations are tax-deductible.
+            © 2026 Centre Communautaire Zad Al-Imane. Tous les dons sont déductibles d'impôts.
           </p>
         </div>
       </footer>

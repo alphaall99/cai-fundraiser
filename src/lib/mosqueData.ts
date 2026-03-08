@@ -3,9 +3,9 @@
 
 export const TIERS = {
   1: { price: 500, label: "Bronze", color: "tier-1" },
-  2: { price: 1000, label: "Silver", color: "tier-2" },
-  3: { price: 2500, label: "Gold", color: "tier-3" },
-  4: { price: 5000, label: "Platinum", color: "tier-4" },
+  2: { price: 1000, label: "Argent", color: "tier-2" },
+  3: { price: 1500, label: "Or", color: "tier-3" },
+  4: { price: 2000, label: "Platine", color: "tier-4" },
 } as const;
 
 export type TierKey = keyof typeof TIERS;

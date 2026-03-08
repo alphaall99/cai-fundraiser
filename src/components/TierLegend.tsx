@@ -1,10 +1,10 @@
 import { TIERS, TierKey } from "@/lib/mosqueData";
 
 const tierVisuals: Record<number, { gradient: string; description: string }> = {
-  1: { gradient: "from-tier-1 to-emerald-light", description: "Foundation & walls" },
-  2: { gradient: "from-tier-2 to-gold-light", description: "Structural elements" },
-  3: { gradient: "from-tier-3 to-purple-400", description: "Dome & minaret" },
-  4: { gradient: "from-tier-4 to-pink-400", description: "Crown of the dome" },
+  1: { gradient: "from-tier-1 to-emerald-light", description: "Fondation et murs" },
+  2: { gradient: "from-tier-2 to-gold-light", description: "Éléments structurels" },
+  3: { gradient: "from-tier-3 to-purple-400", description: "Dôme et minaret" },
+  4: { gradient: "from-tier-4 to-pink-400", description: "Sommet du dôme" },
 };
 
 export default function TierLegend() {
@@ -18,7 +18,7 @@ export default function TierLegend() {
             <div className={`w-4 h-4 rounded-[2px] bg-gradient-to-br ${v.gradient}`} />
             <div>
               <span className="text-xs font-semibold text-foreground">{t.label}</span>
-              <span className="text-xs text-muted-foreground ml-1">${t.price.toLocaleString()}</span>
+              <span className="text-xs text-muted-foreground ml-1">{t.price.toLocaleString()} $</span>
             </div>
           </div>
         );
