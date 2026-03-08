@@ -16,10 +16,10 @@ interface DonationModalProps {
 }
 
 const tierGradients: Record<number, string> = {
-  1: "from-tier-1 to-emerald-light",
-  2: "from-tier-2 to-gold-light",
-  3: "from-tier-3 to-purple-400",
-  4: "from-tier-4 to-pink-400",
+  1: "from-tier-1 to-amber-600",
+  2: "from-tier-2 to-gray-400",
+  3: "from-tier-3 to-yellow-400",
+  4: "from-tier-4 to-gray-300",
 };
 
 export default function DonationModal({ block, open, onClose, onDonate }: DonationModalProps) {
@@ -81,7 +81,6 @@ export default function DonationModal({ block, open, onClose, onDonate }: Donati
           </DialogDescription>
         </DialogHeader>
 
-        {/* Barre de progression */}
         <div className="w-full h-2 bg-muted rounded-full overflow-hidden">
           <motion.div
             className={`h-full bg-gradient-to-r ${tierGradients[block.tier]} rounded-full`}
@@ -142,7 +141,6 @@ export default function DonationModal({ block, open, onClose, onDonate }: Donati
                 </div>
               </div>
 
-              {/* Info fiscale */}
               <div className="flex items-start gap-2 bg-muted/50 rounded-lg p-3">
                 <ShieldCheck className="w-4 h-4 text-primary mt-0.5 shrink-0" />
                 <p className="text-[11px] text-muted-foreground">

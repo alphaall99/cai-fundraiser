@@ -1,6 +1,7 @@
 import { motion } from "framer-motion";
 import { Heart } from "lucide-react";
 import logo from "@/assets/logo_ccai.png";
+import ThemeToggle from "./ThemeToggle";
 
 export default function SiteHeader() {
   return (
@@ -20,15 +21,18 @@ export default function SiteHeader() {
           </div>
         </motion.div>
 
-        <motion.a
-          initial={{ opacity: 0, x: 20 }}
-          animate={{ opacity: 1, x: 0 }}
-          href="#mosque"
-          className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-primary text-primary-foreground text-sm font-medium hover:opacity-90 transition-opacity shadow-soft"
-        >
-          <Heart className="w-4 h-4" />
-          Faire un don
-        </motion.a>
+        <div className="flex items-center gap-2">
+          <ThemeToggle />
+          <motion.a
+            initial={{ opacity: 0, x: 20 }}
+            animate={{ opacity: 1, x: 0 }}
+            href="#mosque"
+            className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-primary text-primary-foreground text-sm font-medium hover:opacity-90 transition-opacity shadow-soft"
+          >
+            <Heart className="w-4 h-4" />
+            Faire un don
+          </motion.a>
+        </div>
       </div>
     </header>
   );
