@@ -16,7 +16,8 @@ const tierStyles: Record<number, { gradient: string; label: string; text: string
 export default function DonationSummary({ blocks }: DonationSummaryProps) {
   const donatedBlocks = blocks
     .filter((b) => b.donated > 0)
-    .sort((a, b) => b.donated - a.donated);
+    .sort((a, b) => b.donated - a.donated)
+    .slice(0, 20);
 
   const tierStats = ([1, 2, 3, 4] as TierKey[]).map((tier) => {
     const tierBlocks = blocks.filter((b) => b.tier === tier);
